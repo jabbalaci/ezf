@@ -1,0 +1,5 @@
+cat:
+	cat Justfile
+
+clean:
+	rm -f ./*.mod ./a.out ./main ./*.o ./a.out

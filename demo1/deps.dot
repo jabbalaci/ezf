@@ -1,0 +1,14 @@
+
+digraph D {
+    // graph [concentrate=true];
+    // layout=neato;
+    // rankdir=LR;
+    // edge [dir=none];
+
+    "main.f90" [fillcolor=green, style=filled];
+
+    "main.f90" -> {"jstringbuffer.f90" "jstring.f90"};
+    "jstringbuffer.f90" -> {"jtypes.f90" "jassert.f90"};
+    "jstring.f90" -> {"jconstants.f90" "jassert.f90" "jsys.f90" "jstringbuffer.f90"};
+    "jconstants.f90" -> {"jtypes.f90"};
+}

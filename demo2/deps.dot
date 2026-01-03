@@ -1,0 +1,12 @@
+
+digraph D {
+    // graph [concentrate=true];
+    // layout=neato;
+    // rankdir=LR;
+    // edge [dir=none];
+
+    "main.f90" [fillcolor=green, style=filled];
+
+    "main.f90" -> {"jconstants.f90"};
+    "jconstants.f90" -> {"jtypes.f90"};
+}

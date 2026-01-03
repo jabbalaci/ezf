@@ -1,0 +1,11 @@
+
+digraph D {
+    // graph [concentrate=true];
+    // layout=neato;
+    // rankdir=LR;
+    // edge [dir=none];
+
+    "main.f90" [fillcolor=green, style=filled];
+
+    "main.f90" -> {"jsys.f90"};
+}

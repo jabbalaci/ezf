@@ -9,7 +9,7 @@ Modules can be in the current directory and/or in the `src/` subdirectory.
 The script tries to compile the source files (the imported modules too)
 in the correct order.
 
-It was tested under Linux only with the gfortran compiler.
+It was tested under Linux and Windows with the gfortran compiler.
 
 Author: Laszlo Szathmary (jabba.laci@gmail.com), 2026
 GitHub: https://github.com/jabbalaci/ezf
@@ -38,6 +38,8 @@ INTRINSICS = [
     "ieee_exceptions",
 ]
 
+IS_WINDOWS = os.name == "nt"
+
 # fmt: off
 Options = {
     "info": False,
@@ -63,7 +65,7 @@ def locate(fname: str) -> list[str]:
     """
     result: list[str] = []  # if it's empty: the file is not found
     for dir in SRC_DIRS:
-        if os.path.isfile(f"{dir}/{fname}"):
+        if os.path.isfile(os.path.join(dir, fname)):
             result.append(dir)
         #
     #
@@ -80,10 +82,10 @@ c:
     {{compile}}
 
 r:
-    ./a.out
+    {{run}}
 
 cr:
-    {{compile}} && ./a.out
+    {{compile}} && {{run}}
 """.strip()
 
 
@@ -107,6 +109,7 @@ class Makefile:
     def start(self) -> None:
         text = self.template
         text = text.replace("{{compile}}", self.gf.get_compile_command())
+        text = text.replace("{{run}}", self.gf.get_run_command())
         print(text)
 
 
@@ -163,6 +166,10 @@ class GFortran:
     def __init__(self, parent: "Graph") -> None:
         self.parent = parent
         self.compiler = "gfortran"
+
+        self.exe_name = "a.exe" if IS_WINDOWS else "a.out"
+        self.exe_cmd = self.exe_name if IS_WINDOWS else ("./" + self.exe_name)
+
         if not os.path.isdir("mod"):
             try:
                 os.mkdir("mod")
@@ -175,11 +182,12 @@ class GFortran:
     def get_compile_command(self) -> str:
         cmd = f"{self.compiler} -Jmod -Imod "
         cmd = cmd + " ".join(self.parent.filenames_with_paths())
+        # cmd = cmd + f" -o {self.exe_name}"
         return cmd
 
     def get_run_command(self) -> str:
         cli_args = [f'"{arg}"' for arg in self.parent.arguments]
-        cmd = "./a.out"
+        cmd = self.exe_cmd
         if cli_args:
             cmd += " " + " ".join(cli_args)
         return cmd
@@ -308,7 +316,7 @@ class Graph:
         if loc == ".":
             return fname
         # else
-        return loc + "/" + fname
+        return os.path.join(loc, fname)
 
     def is_it_a_module_in_the_same_file(self, name: str, lines: list[str]) -> bool:
         for line in lines:

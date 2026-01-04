@@ -213,5 +213,6 @@ __marimo__/
 .vscode/
 older_versions/
 a.out
+*.exe
 main
 mod/

@@ -178,9 +178,9 @@ $
 
 ## Usage tips
 
-It was tested under Linux only with the [gfortran](https://gcc.gnu.org/fortran/) compiler.
+It was tested under Linux and Windows with the [gfortran](https://gcc.gnu.org/fortran/) compiler.
 
-I suggest putting an alias on `ezf.py`,
+Under Linux, I suggest putting an alias on `ezf.py`,
 and then you can call it easily.
 
 Add this line to the end of your `~/.bashrc` file:
@@ -196,5 +196,5 @@ standard library of Python.
 
 * It was tested with the **gfortran** compiler only.
 * For the graph visualization, install the **graphviz**
-  package. (Under Arch-based distros: `sudo pacman -S graphviz`).
-  This package is not obligatory though. If it's missing, you'll get just a warning.
+  package. (Under Arch-based distros: `sudo pacman -S graphviz`). This package is not obligatory though.
+  If it's missing, you'll get just a warning.

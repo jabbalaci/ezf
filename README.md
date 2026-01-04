@@ -35,6 +35,7 @@ Usage: ezf [options] main.f90 [-- arguments]
 Options:
 -h, --help          this help
 -i, --info          show all info (don't compile; don't run)
+-m, --makefile      print a Makefile to stdout (can be redirected to a file)
 -c                  compile
 -r                  run
 -cr                 compile and run (default if no options are given)
@@ -42,6 +43,19 @@ Options:
 
 * *options* are for the script
 * *arguments* are passed to the program to be compiled in the form of command-line arguments
+
+## Demos
+
+You can find some demo projects here (see the `demo*/` folders).
+They use my [jflib library](https://github.com/jabbalaci/jflib), which is under development.
+These demos include an older version of this library. Check out
+the GitHub page of [jflib](https://github.com/jabbalaci/jflib) for the newest version.
+
+* `demo1` is the largest project, consisting of several modules
+* `demo2` demonstrates that
+  you can also use modules in the same file
+* `demo3` demonstrates that you can pass command-line
+  arguments to the program via the script
 
 ## Examples
 
@@ -77,6 +91,7 @@ The script can provide useful information about the
 modules of the project.
 
 ```
+$ cd demo1
 $ ezf -i main.f90
 Dependencies:
 =============
@@ -132,18 +147,34 @@ Compile and run:
 Compile (and run) instructions are printed on the screen.
 They can be copied to a Makefile.
 
-## Demos
+## Makefile
 
-You can find some demo projects here (see the `demo*/` folders).
-They use my [jflib library](https://github.com/jabbalaci/jflib), which is under development.
-These demos include an older version of this library. Check out
-the GitHub page of [jflib](https://github.com/jabbalaci/jflib) for the newest version.
+If you need, you can generate a Makefile too.
 
-* `demo1` is the largest project, consisting of several modules
-* `demo2` demonstrates that
-  you can also use modules in the same file
-* `demo3` demonstrates that you can pass command-line
-  arguments to the program via the script
+```text
+$ cd demo3
+$ ezf -m main.f90
+cat:
+        cat Makefile
+
+c:
+        gfortran -Jmod -Imod jsys.f90 main.f90
+
+r:
+        ./a.out
+
+cr:
+        gfortran -Jmod -Imod jsys.f90 main.f90 && ./a.out
+```
+
+By default, it's printed on stdout. You can redirect it to a file:
+
+```text
+$ ezf -m main.f90 >Makefile
+$ make c
+gfortran -Jmod -Imod jsys.f90 main.f90
+$
+```
 
 ## Usage tips
 

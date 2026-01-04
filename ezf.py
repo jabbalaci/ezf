@@ -42,7 +42,8 @@ INTRINSICS = [
 Options = {
     "info": False,
     "compile": False,
-    "run": False
+    "run": False,
+    "makefile": False,
 }
 # fmt: on
 
@@ -67,6 +68,46 @@ def locate(fname: str) -> list[str]:
         #
     #
     return result
+
+
+## Makefile #################################################################
+
+MAKEFILE_TEMPLATE = """
+cat:
+    cat Makefile
+
+c:
+    {{compile}}
+
+r:
+    ./a.out
+
+cr:
+    {{compile}} && ./a.out
+""".strip()
+
+
+class Makefile:
+    def __init__(self, gf: "GFortran") -> None:
+        self.gf: "GFortran" = gf
+        self.template = self.get_template()
+
+    def get_template(self) -> str:
+        result: list[str] = []
+        for line in MAKEFILE_TEMPLATE.splitlines():
+            if line.startswith("    "):
+                line = line.removeprefix("    ")
+                result.append("\t" + line)
+            else:
+                result.append(line)
+            #
+        #
+        return "\n".join(result)
+
+    def start(self) -> None:
+        text = self.template
+        text = text.replace("{{compile}}", self.gf.get_compile_command())
+        print(text)
 
 
 ## GraphViz #################################################################
@@ -239,6 +280,10 @@ class Graph:
             cmd = gf.get_run_command()
             print("#", cmd)
             os.system(cmd)
+        #
+        if Options["makefile"]:
+            mf = Makefile(gf)
+            mf.start()
 
     def add_to_set(self, fname: str) -> None:
         if fname not in self.filenames:
@@ -358,6 +403,7 @@ Usage: ezf [options] main.f90 [-- arguments]
 Options:
 -h, --help          this help
 -i, --info          show all info (don't compile; don't run)
+-m, --makefile      print a Makefile to stdout (can be redirected to a file)
 -c                  compile
 -r                  run
 -cr                 compile and run (default if no options are given)
@@ -417,6 +463,12 @@ def check_arguments() -> tuple[str, list[str], list[str]]:
         Options["compile"] = True
         Options["run"] = True
         options.remove("-cr")
+    if ("-m" in options) or ("--makefile" in options):
+        Options["makefile"] = True
+        if "-m" in options:
+            options.remove("-m")
+        if "--makefile" in options:
+            options.remove("--makefile")
     #
     if options:
         print("Unknown option(s):", options, file=sys.stderr)

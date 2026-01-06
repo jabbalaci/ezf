@@ -265,6 +265,7 @@ class Graph:
             print("====================")
             print("Maybe you can delete them?")
             print(unused)
+            print(" ".join(unused))
             print("---")
         #
         gf = GFortran(self)
